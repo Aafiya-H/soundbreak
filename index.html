@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+    content="SoundBreak: A Systematic Study of Audio-Only Adversarial Attacks on Trimodal Models">
+  <meta property="og:title" content="SoundBreak: Audio-Only Adversarial Attacks on Trimodal Models" />
+  <meta property="og:description"
+    content="We study untargeted, audio-only adversarial attacks on trimodal audio-video-language models, achieving up to 96% attack success rate." />
+  <meta property="og:url" content="https://aafiya-h.github.io/soundbreak/" />
+  <meta property="og:image" content="static/images/concept_figure.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <meta name="twitter:title" content="SoundBreak: Audio-Only Adversarial Attacks on Trimodal Models">
+  <meta name="twitter:description"
+    content="We study untargeted, audio-only adversarial attacks on trimodal audio-video-language models, achieving up to 96% attack success rate.">
+  <meta name="twitter:image" content="static/images/concept_figure.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="keywords"
+    content="adversarial attacks, multimodal models, audio attacks, audio-video-language models, robustness, SoundBreak, ACL 2026">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>SoundBreak: Audio-Only Adversarial Attacks on Trimodal Models</title>
+  <link rel="icon" type="image/svg+xml" href="static/images/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+
+  <style>
+    .hero {
+      background: white;
+      color: #363636;
+    }
+
+    .hero .title {
+      color: #363636;
+      text-shadow: none;
+    }
+
+    .hero .publication-authors {
+      color: #4a4a4a;
+    }
+
+    .publication-links .button {
+      margin: 0.25rem;
+      transition: all 0.3s ease;
+    }
+
+    .publication-links .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .key-findings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+      padding: 0 1rem;
+    }
+
+    .finding-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .finding-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #e05050, #8b1a1a);
+    }
+
+    .finding-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .finding-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #e05050, #8b1a1a);
+      border-radius: 50%;
+      margin-bottom: 1.5rem;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .finding-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #363636;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .finding-metric {
+      font-size: 1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #e05050, #8b1a1a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .finding-description {
+      color: #4a4a4a;
+      line-height: 1.6;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .figure-section img {
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+      max-width: 100%;
+    }
+
+    .figure-caption {
+      color: #666;
+      font-size: 0.9rem;
+      margin-top: 0.75rem;
+      text-align: center;
+    }
+
+    .author-block a {
+      color: #3273dc;
+      text-decoration: none;
+    }
+
+    .author-block a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .key-findings-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 0.5rem;
+      }
+
+      .finding-card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">SoundBreak: A Systematic Study of Audio-Only Adversarial Attacks on Trimodal Models</h1>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://www.linkedin.com/in/aafiya-hussain-a66870179/" target="_blank">Aafiya Shamshad Hussain</a><sup>♠</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://www.linkedin.com/in/gaurav-srivastava-gk/" target="_blank">Gaurav Srivastava</a><sup>♠</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://www.linkedin.com/in/alvi-ishmam" target="_blank">Alvi Md Ishmam</a><sup>♠</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://www.linkedin.com/in/zaber-ibn-abdul-hakim-024010185/" target="_blank">Zaber Ibn Abdul Hakim</a><sup>♠</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://people.cs.vt.edu/chris/" target="_blank">Chris Thomas</a><sup>♠</sup>
+              </span>
+            </div>
+
+            <div class="is-size-6 publication-authors" style="margin-top: 0.5rem;">
+              <span class="author-block"><sup>♠</sup>Department of Computer Science, Virginia Tech, Blacksburg, VA, USA</span>
+            </div>
+
+            <div class="has-text-centered" style="margin-top: 1rem;">
+              <span class="tag is-danger is-medium" style="font-size: 0.95rem; padding: 0.6rem 1.2rem;">
+                <strong>ACL 2026 Main Conference</strong>
+              </span>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2601.16231" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
+
+                <span class="link-block">
+                  <a href="https://github.com/Aafiya-H/soundbreak" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code (Coming Soon)</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Concept Figure -->
+  <section class="section figure-section" style="padding-top: 0; padding-bottom: 1rem;">
+    <div class="container is-max-desktop">
+      <div class="has-text-centered">
+        <img src="static/images/concept_figure.jpg"
+             alt="SoundBreak concept figure showing audio-only adversarial attacks on trimodal models"
+             style="max-width: 55%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.10);">
+        <p class="figure-caption">Audio-only adversarial attacks on audio–video–language models. An additive perturbation applied solely to the audio stream propagates through the model, resulting in incorrect outputs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Abstract -->
+  <section class="section hero is-light">
+    <div class="container is-max-widescreen">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Multimodal foundation models that integrate audio, vision, and language achieve strong performance on reasoning and generation tasks, yet their robustness to adversarial manipulation remains poorly understood. We study a realistic and underexplored threat model: <strong>untargeted, audio-only adversarial attacks</strong> on trimodal audio–video–language models. We analyze six complementary attack objectives that target different stages of multimodal processing, including audio encoder representations, cross-modal attention, hidden states, and output likelihoods. Across four state-of-the-art models and multiple benchmarks, we show that audio-only perturbations can induce severe multimodal failures, achieving up to <strong>96% attack success rate.</strong> We further show that attacks can be successful at low perceptual distortions (LPIPS ≤ 0.08, SI-SNR ≥ 0 dB) and benefit more from extended optimization than increased data scale. We evaluate the feasibility of these attacks under physically realistic conditions by incorporating room impulse response (RIR) modeling, showing that audio-only perturbations remain effective under environmental transformations and thus highlight the practical risk of single-modality attacks in real-world multimodal systems. Transferability across models and encoders remains limited, while speech recognition systems such as Whisper primarily respond to perturbation magnitude, achieving <strong>&gt;97% attack success</strong> under severe distortion. These results expose a previously overlooked single-modality attack surface in multimodal systems and motivate defenses that enforce cross-modal consistency.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Findings -->
+  <section class="section">
+    <div class="container is-max-widescreen">
+      <h2 class="title is-3 has-text-centered">Key Findings</h2>
+      <p class="subtitle has-text-centered is-6" style="margin-bottom: 3rem;">Core insights from our systematic study of audio-only adversarial attacks on trimodal models</p>
+      <div class="key-findings-grid">
+
+        <div class="finding-card">
+          <div class="finding-icon">
+            <i class="fas fa-bullseye"></i>
+          </div>
+          <div class="finding-content">
+            <h3 class="finding-title">Encoder-Space Attacks Dominate</h3>
+            <div class="finding-metric">Up to 96% Attack Success Rate</div>
+            <p class="finding-description">The encoder-based cosine similarity loss achieves 89.12% ASR on AVQA; the combined loss reaches 96.03%. Targeting audio encoder representations is the most effective way to corrupt downstream cross-modal reasoning.</p>
+          </div>
+        </div>
+
+        <div class="finding-card">
+          <div class="finding-icon">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <div class="finding-content">
+            <h3 class="finding-title">Limited Cross-Model Transferability</h3>
+            <div class="finding-metric">ASR Drops from ~10% to ~4% Across Architectures</div>
+            <p class="finding-description">Perturbations trained on one architecture fail to transfer to others. Attacks exploit model-specific representational geometries rather than universal multimodal vulnerabilities.</p>
+          </div>
+        </div>
+
+        <div class="finding-card">
+          <div class="finding-icon">
+            <i class="fas fa-eye-slash"></i>
+          </div>
+          <div class="finding-content">
+            <h3 class="finding-title">Imperceptible Yet Effective</h3>
+            <div class="finding-metric">LPIPS ≤ 0.08, SI-SNR ≥ 0 dB</div>
+            <p class="finding-description">Encoder-space and attention-based attacks achieve high success with minimal perceptual distortion. Adversarial failures arise from subtle, structured perturbations rather than large acoustic noise.</p>
+          </div>
+        </div>
+
+        <div class="finding-card">
+          <div class="finding-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="finding-content">
+            <h3 class="finding-title">Optimization Over Data Scale</h3>
+            <div class="finding-metric">80%+ ASR with Small Datasets</div>
+            <p class="finding-description">Extended optimization on small datasets consistently outperforms training on larger datasets with fewer iterations, revealing that adversarial attacks exploit consistent model behaviors rather than dataset diversity.</p>
+          </div>
+        </div>
+
+        <div class="finding-card">
+          <div class="finding-icon">
+            <i class="fas fa-microphone"></i>
+          </div>
+          <div class="finding-content">
+            <h3 class="finding-title">Physical-World Robustness</h3>
+            <div class="finding-metric">97.96% ASR Under RIR Simulation</div>
+            <p class="finding-description">With room impulse response (RIR) augmented training, the combined attack achieves 97.96% ASR under physically simulated conditions, demonstrating real-world threat relevance beyond digital settings.</p>
+          </div>
+        </div>
+
+        <div class="finding-card">
+          <div class="finding-icon">
+            <i class="fas fa-layer-group"></i>
+          </div>
+          <div class="finding-content">
+            <h3 class="finding-title">Layer-Specific Vulnerabilities</h3>
+            <div class="finding-metric">Lower Layers Drive Audio Attacks</div>
+            <p class="finding-description">Lower layers (1–10) contribute most to audio-driven attacks, mid-level layers (11–18) are most influential for vision-attention manipulation, while jointly optimizing all layers substantially boosts attack success.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Figures Section -->
+  <section class="section hero is-light figure-section">
+    <div class="container is-max-widescreen">
+      <h2 class="title is-3 has-text-centered">Results</h2>
+
+      <div class="columns is-centered" style="margin-top: 2rem;">
+        <div class="column is-4 has-text-centered">
+          <img src="static/images/iteration_vs_asr_loss1.png" alt="Iterations vs ASR"
+               style="width: 100%; height: 280px; object-fit: contain; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.10);">
+          <p class="figure-caption">Relation between total training iterations and ASR. Extended optimization on smaller datasets yields higher ASR.</p>
+        </div>
+        <div class="column is-4 has-text-centered">
+          <img src="static/images/budget_vs_asr.png" alt="Budget vs ASR"
+               style="width: 100%; height: 280px; object-fit: contain; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.10);">
+          <p class="figure-caption">Attack budget vs ASR for the encoder-space attack on VideoLLAMA2. Non-monotonic relationship between budget and effectiveness.</p>
+        </div>
+        <div class="column is-4 has-text-centered">
+          <img src="static/images/layerwise_attn.png" alt="Layerwise attention"
+               style="width: 100%; height: 280px; object-fit: contain; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.10);">
+          <p class="figure-caption">Layer-wise attention visualizations showing how audio-only perturbations shift attention allocation across transformer layers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Attack Objectives Summary Table -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Attack Objectives</h2>
+      <p class="subtitle has-text-centered is-6" style="margin-bottom: 2rem;">Six complementary adversarial objectives targeting different stages of multimodal processing</p>
+      <div class="table-container">
+        <table class="table is-striped is-hoverable is-fullwidth">
+          <thead>
+            <tr>
+              <th>Attack Objective</th>
+              <th>Target Stage</th>
+              <th>AVQA ASR (%)</th>
+              <th>LPIPS ↓</th>
+              <th>SI-SNR (dB) ↑</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>L_negLM</code></td>
+              <td>Output likelihood</td>
+              <td>10.27</td>
+              <td>0.22</td>
+              <td>−11.48</td>
+            </tr>
+            <tr>
+              <td><code>L_cos</code></td>
+              <td>Audio encoder</td>
+              <td>89.12</td>
+              <td>0.08</td>
+              <td>−1.77</td>
+            </tr>
+            <tr>
+              <td><code>L_visionatt</code></td>
+              <td>Vision attention</td>
+              <td>18.72</td>
+              <td>0.07</td>
+              <td>−1.02</td>
+            </tr>
+            <tr>
+              <td><code>L_audioatt</code></td>
+              <td>Audio attention</td>
+              <td>56.21</td>
+              <td>0.06</td>
+              <td>0.33</td>
+            </tr>
+            <tr>
+              <td><code>L_randatt</code></td>
+              <td>Attention structure</td>
+              <td>17.24</td>
+              <td>0.06</td>
+              <td>0.05</td>
+            </tr>
+            <tr>
+              <td><code>L_hidden-cos</code></td>
+              <td>Hidden states</td>
+              <td>15.13</td>
+              <td>0.06</td>
+              <td>0.56</td>
+            </tr>
+            <tr>
+              <td><code><strong>L_combined</strong></code></td>
+              <td>All stages</td>
+              <td><strong>96.03</strong></td>
+              <td>0.14</td>
+              <td>−6.23</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="has-text-centered" style="font-size: 0.85rem; color: #888; margin-top: 0.5rem;">All attacks trained on VideoLLAMA2 for 150 epochs on AVQA. Evaluated on 2000 AVQA samples.</p>
+    </div>
+  </section>
+
+  <!-- BibTeX -->
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@article{hussain2025soundbreak,
+  title={SoundBreak: A Systematic Study of Audio-Only Adversarial Attacks on Trimodal Models},
+  author={Hussain, Aafiya Shamshad and Srivastava, Gaurav and Ishmam, Alvi Md and Hakim, Zaber Ibn Abdul and Thomas, Chris},
+  year={2025}
+}</code></pre>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template"
+                target="_blank">Academic Project Page Template</a>.
+              This website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"
+                target="_blank">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
